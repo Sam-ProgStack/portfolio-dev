@@ -2,7 +2,15 @@ import streamlit as st
 import base64
 from PIL import Image
 import io
+# --- CONFIGURATION ---
+# IMPORTANT: This is the ONLY place you need to change the password.
+CORRECT_PASSWORD = "Admissions2026" 
+# Define the password input key for the session state
+PASSWORD_KEY = "admissions_password_input" 
 
+# Initialize session state for authentication
+if 'authenticated' not in st.session_state:
+    st.session_state['authenticated'] = False
 # Page configuration
 st.set_page_config(
     page_title="Samarth - Digital Portfolio",
@@ -195,7 +203,14 @@ def load_css():
             font-size: 1.2rem;
         }
     }
-    
+    .login-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 80vh;
+        text-align: center;
+    }
     /* Hide Streamlit Elements */
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
@@ -473,9 +488,45 @@ def add_interactive_elements():
     setTimeout(createParticles, 1000);
     </script>
     """, unsafe_allow_html=True)
+def check_password_and_login():
+    """Checks the password and updates session state."""
+    # st.session_state is required to get the value from st.text_input
+    if st.session_state[PASSWORD_KEY] == CORRECT_PASSWORD:
+        st.session_state['authenticated'] = True
+    else:
+        st.error("Incorrect password. Please try again.")
 
+def login_page():
+    """Displays the password input screen."""
+    
+    st.title("Admissions Portfolio Access")
+    
+    # Use HTML/CSS for centering
+    st.markdown('<div class="login-container">', unsafe_allow_html=True)
+    
+    st.header("Welcome, Admissions Officer.")
+    st.info("Please enter the access code provided in my application.")
+
+    # Create the password input and button
+    password_input = st.text_input(
+        "Enter Access Code:", 
+        type="password", 
+        key=PASSWORD_KEY, 
+        label_visibility="collapsed" # Hide the default label
+    )
+    
+    st.button(
+        "Unlock Portfolio", 
+        on_click=check_password_and_login,
+        type="primary"
+    )
+    if st.session_state.get('login_attempted') and st.session_state['authenticated']:
+        # This check is executed AFTER the button click callback finishes, removing the warning.
+        st.session_state['login_attempted'] = False
+        st.rerun()
+    st.markdown('</div>', unsafe_allow_html=True)
 # Main App
-def main():
+def main_app():
     # Load custom CSS
     load_css()
     
@@ -502,4 +553,7 @@ def main():
     st.markdown("<br><br>", unsafe_allow_html=True)
 
 if __name__ == "__main__":
-    main()
+    if st.session_state['authenticated']:
+        main_app()
+    else:
+        login_page()
