@@ -1,7 +1,7 @@
 import streamlit as st
 import base64
 from PIL import Image
-import io
+import io, os
 # --- CONFIGURATION ---
 # IMPORTANT: This is the ONLY place you need to change the password.
 CORRECT_PASSWORD = "Admissions2026" 
@@ -104,8 +104,8 @@ def load_css():
     }
     
     .project-description {
-        color: #7f8c8d;
-        line-height: 1.6;
+        font-size: 10rem;
+        color: black;
         margin-bottom: 1.5rem;
     }
     
@@ -267,8 +267,8 @@ def create_navigation():
                 <a href="#home" style = "color:black;text-decoration:none;"class="nav-pill active" id="nav-home">Home</a>
                 <a href="#featured-projects" style = "color:black;text-decoration:none;"class="nav-pill" id="nav-projects">Projects</a>
                 <a href="#technical-skills" style = "color:black;text-decoration:none;"class="nav-pill" id="nav-skills">Skills</a>
-                <a href="#about-me" style = "color:black;text-decoration:none;"class="nav-pill" id="nav-contact">About Me</a>            
                 <a href="#awards" style = "color:black;text-decoration:none;"class="nav-pill" id="nav-awards">Awards</a>
+                <a href="#about-me" style = "color:black;text-decoration:none;"class="nav-pill" id="nav-contact">About Me</a>            
                 <a href="#lets-connect" style = "color:black;text-decoration:none;"class="nav-pill" id="nav-contact">Contact</a>
             </div>
         </div>
@@ -316,27 +316,28 @@ def create_hero_section():
 
 # Projects Section
 def create_projects_section():
-    st.markdown("<h2 style='text-align: center; margin: 3rem 0 2rem 0; font-size: 2.5rem; color: #2c3e50;'>Featured Projects</h2>", unsafe_allow_html=True)
+    
+    st.markdown("""
+    <div class = "projects-section" id = "featured-projects">
+            <h2 style="margin-bottom: 1rem; text-align: center; font-size:2.5rem;"></h2>
+            <h3 style="margin-bottom: 1rem; text-align: center; font-size:2.5rem;"></h3>
+            <h4 style="margin-bottom: 1rem; text-align: center; font-size:2.5rem;">Featured Projects</h4>
+        </div>
+    """, unsafe_allow_html=True)
     
     # Sample project data
     projects = [
         {
-            "title": "AI-Powered Web Scraper",
-            "description": "Built a intelligent web scraping tool using Python, BeautifulSoup, and machine learning to automatically extract and categorize data from various websites.",
-            "tech_stack": ["Python", "BeautifulSoup", "Pandas", "Scikit-learn"],
-            "github_link": "https://github.com/yourusername/project1"
+            "title": "Mail Merge",
+            "description": "Attendance Automation.",
+            "tech_stack": ["Python", "Colab", "Pandas"],
+            "github_link": "https://colab.research.google.com/drive/1laZSba849sZ3lZuEXogn59sTkif3ul7l#scrollTo=BtZVNO64I1II"
         },
         {
-            "title": "Real-Time Data Dashboard",
-            "description": "Created an interactive dashboard using Streamlit and Plotly to visualize real-time financial data with advanced filtering and analysis capabilities.",
-            "tech_stack": ["Streamlit", "Plotly", "PostgreSQL", "APIs"],
-            "github_link": "https://github.com/yourusername/project2"
-        },
-        {
-            "title": "Machine Learning Classifier",
-            "description": "Developed a multi-class classification model achieving 95% accuracy for predicting customer behavior using ensemble methods and feature engineering.",
-            "tech_stack": ["Python", "TensorFlow", "Pandas", "NumPy"],
-            "github_link": "https://github.com/yourusername/project3"
+            "title": "Calendar Generator",
+            "description": "Calendar Generator.",
+            "tech_stack": ["Python", "Colab", "Pandas"],
+            "github_link": "https://colab.research.google.com/drive/1lOZEygt_A_OaWWzCy_H1yaZoGwOO1vA4#scrollTo=VD0qFg90Qb3k"
         }
     ]
     
@@ -365,11 +366,88 @@ def create_projects_section():
                 ">View Project</a>
             </div>
             """, unsafe_allow_html=True)
+    
+# Function to convert Google Drive file ID to direct image URL
+def google_drive_direct_link(file_id):
+    return f"https://drive.google.com/uc?export=view&id={file_id}"
+
+# Awards Section with tabs
+def create_awards_section():    
+    
+    st.markdown("""
+    <div class = "awards-section" id = "awards">
+            <h2 style="margin-bottom: 1rem; text-align: center; font-size:2.5rem;"></h2>
+            <h3 style="margin-bottom: 1rem; text-align: center; font-size:2.5rem;"></h3>
+            <h4 style="margin-bottom: 1rem; text-align: center; font-size:2.5rem;">My Awards</h4>
+        </div>
+    """, unsafe_allow_html=True)
+
+    # Define path to main data folder
+    # import requests
+
+    # api_url = "https://api.github.com/repos/Sam-ProgStack/portfolio-dev/contents/College%20Apps%20Certificates%20Folder"
+    # response = requests.get(api_url)
+    # data_dir = response.json()
+    # import json
+    # data_dir = json.loads(data_dir)
+
+    # folder_list = [item['name'] for item in data_dir if item['type'] == 'dir']
+    # Define path to main data folder
+    data_dir = "College Apps Certificates Folder-20251107T032620Z-1-001/College Apps Certificates Folder"
+    # Sample folder list and base data directory (modify as needed)
+    try:
+        if os.path.exists(data_dir) and os.path.isdir(data_dir):
+            folder_list = [name for name in os.listdir(data_dir) if os.path.isdir(os.path.join(data_dir, name))]
+        else:
+            # Fallback if the folder doesn't exist or is not a directory
+            st.error(f"Awards folder not found at: {data_dir}. Check the folder name!")
+            return
+            
+    except Exception as e:
+        st.error(f"An error occurred accessing the directory: {e}")
+        return
+    # Create side-by-side layout: left column narrow for vertical tabs, right column wide for content
+    col1, col2 = st.columns([1, 4])  # Adjust ratio as needed
+
+    with col1:
+        # Use radio buttons for vertical tab navigation
+        selected_folder = st.radio("Select Category", folder_list, index=0)
+
+    with col2:
+        st.header(selected_folder)
+        image_dir = os.path.join(data_dir, selected_folder)
+
+        if os.path.exists(image_dir) and os.path.isdir(image_dir):
+            images = [
+                os.path.join(image_dir, img_file)
+                for img_file in os.listdir(image_dir)
+                if img_file.lower().endswith((".png", ".jpg", ".jpeg", ".gif"))
+            ]
+
+            num_cols = 3  # Number of images per row
+            rows = (len(images) + num_cols - 1) // num_cols  # Calculate number of rows needed
+
+            for row_idx in range(rows):
+                row_cols = st.columns(num_cols)
+                for col_idx in range(num_cols):
+                    img_idx = row_idx * num_cols + col_idx
+                    if img_idx < len(images):
+                        with row_cols[col_idx]:
+                            st.image(images[img_idx], width=200)
+        else:
+            st.write("Category path not found or is not a directory.")
+    
 
 # Skills Section with Progress Bars
 def create_skills_section():
-    st.markdown("<h2 style='text-align: center; margin: 3rem 0 2rem 0; font-size: 2.5rem; color: #2c3e50;'>Technical Skills</h2>", unsafe_allow_html=True)
     
+    st.markdown("""
+        <div class = "skills-section" id = "technical-skills">
+                <h2 style="margin-bottom: 1rem; text-align: center; font-size:2.5rem;"></h2>
+                <h3 style="margin-bottom: 1rem; text-align: center; font-size:2.5rem;"></h3>
+                <h4 style="margin-bottom: 1rem; text-align: center; font-size:2.5rem;">Technical Skills</h4>
+            </div>
+        """, unsafe_allow_html=True)
     skills = {
         "Python": 90,
         "Data Analysis": 85,
@@ -409,7 +487,7 @@ def create_skills_section():
 # Contact Section
 def create_contact_section():
     st.markdown("""
-    <div class="contact-section" id="contact">
+    <div class="contact-section" id="lets-contact">
         <h2 style="margin-bottom: 1rem; font-size: 2.5rem;">Let's Connect</h2>
         <p style="font-size: 1.2rem; margin-bottom: 2rem; opacity: 0.9;">
             Interested in collaborating or have a project in mind?
@@ -418,7 +496,7 @@ def create_contact_section():
             <a href="mailto:samsrinivas678@gmail.com" style="color: white; text-decoration: none; font-size: 1.1rem;">
                 📧 Email
             </a>
-            <a href="https://linkedin.com/in/yourprofile" style="color: white; text-decoration: none; font-size: 1.1rem;">
+            <a href="https://www.linkedin.com/in/samarth-srinivas-ab6617308/" style="color: white; text-decoration: none; font-size: 1.1rem;">
                 💼 LinkedIn
             </a>
             <a href="https://github.com/Sam-ProgStack" style="color: white; text-decoration: none; font-size: 1.1rem;">
@@ -429,17 +507,16 @@ def create_contact_section():
     """, unsafe_allow_html=True)
 def create_about_me_section():
     st.markdown("""
-    <div class = "about-me-section" id = "about">
-        <h2 style="margin-bottom: 1rem; align-items: center; font-size:2.5rem;">About Me</h2>
-        <h4 style="margin-bottom: 1rem; font-size:2.5rem;">My Motive</h4>
+        <div class="about-me-section" id="about-me">
+            <h2 style="margin-bottom: 1rem; text-align: center; font-size:2.5rem;"></h2>
+            <h3 style="margin-bottom: 1rem; text-align: center; font-size:2.5rem;">About Me</h3>
+            <h4 style="margin-bottom: 1rem; text-align: center; font-size:2.5rem;">My Motive</h4>
+            <p style="font-size:1.2rem; margin-bottom:2rem; opacity:0.9; text-align: center;">
+                I want to help the world through research in automation using AI and Machine Learning.
+            </p>
+        </div>
+    """, unsafe_allow_html=True)
 
-        <p style="font-size:1.2rem; margin-bottom:2rem; opacity:0.9;">
-            I want to help the world through research in automation using AI and Machine Learning.
-        </p>
-    </div>
-                
-                
-                """, unsafe_allow_html=True)
 # Interactive Features
 def add_interactive_elements():
     # Floating particles effect
@@ -545,6 +622,9 @@ def main_app():
     
     # Create skills section
     create_skills_section()
+    
+    # Create awards section
+    create_awards_section()
     
     create_about_me_section()
     # Create contact section
