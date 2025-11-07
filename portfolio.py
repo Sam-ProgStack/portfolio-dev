@@ -268,6 +268,7 @@ def create_navigation():
                 <a href="#featured-projects" style = "color:black;text-decoration:none;"class="nav-pill" id="nav-projects">Projects</a>
                 <a href="#technical-skills" style = "color:black;text-decoration:none;"class="nav-pill" id="nav-skills">Skills</a>
                 <a href="#about-me" style = "color:black;text-decoration:none;"class="nav-pill" id="nav-contact">About Me</a>            
+                <a href="#awards" style = "color:black;text-decoration:none;"class="nav-pill" id="nav-awards">Awards</a>
                 <a href="#lets-connect" style = "color:black;text-decoration:none;"class="nav-pill" id="nav-contact">Contact</a>
             </div>
         </div>
